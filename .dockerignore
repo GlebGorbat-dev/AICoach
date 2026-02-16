@@ -1,0 +1,17 @@
+# Backend build: exclude frontend and dev artifacts
+.git
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.coverage
+htmlcov
+.env
+.env.*
+!.env.example
+frontend
+*.md
+.next
+node_modules

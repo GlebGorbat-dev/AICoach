@@ -1,0 +1,31 @@
+# Render Blueprint: Backend (FastAPI) + Frontend (Next.js) via Docker
+# Deploy from GitLab/Bitbucket: connect repo in Render Dashboard, then use this blueprint.
+
+services:
+  # Backend API
+  - type: web
+    runtime: docker
+    name: fastapi-backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 10000
+      # Add your app env vars (DB, API keys, etc.):
+      # - key: MONGODB_URI
+      #   sync: false
+      # - key: OPENAI_API_KEY
+      #   sync: false
+
+  # Frontend (Next.js)
+  - type: web
+    runtime: docker
+    name: nextjs-frontend
+    rootDir: frontend
+    dockerfilePath: frontend/Dockerfile
+    envVars:
+      # Set to your backend URL after first deploy (e.g. https://fastapi-backend.onrender.com)
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+      - key: PORT
+        value: 10000

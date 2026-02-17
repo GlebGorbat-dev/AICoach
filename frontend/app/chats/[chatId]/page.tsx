@@ -157,122 +157,138 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex h-screen bg-dark-bg">
-      {/* Sidebar */}
-      <div className="w-80 bg-dark-surface border-r border-dark-border flex flex-col">
-        <div className="p-4 border-b border-dark-border">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-neon-red animate-neon">AI Coach</h1>
-            <Link
-              href="/chats"
-              className="text-gray-400 hover:text-neon-red transition-colors cursor-pointer"
-            >
-              ← Back
-            </Link>
-          </div>
-          {chat && (
-            <div className="mb-4">
-              {isEditingTitle ? (
-                <div className="space-y-2">
-                  <Input
-                    value={titleInput}
-                    onChange={(e) => setTitleInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSaveTitle();
-                      } else if (e.key === 'Escape') {
-                        handleCancelEditTitle();
-                      }
-                    }}
-                    disabled={isUpdatingTitle}
-                    className="mb-2"
-                    autoFocus
-                  />
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={handleSaveTitle}
-                      isLoading={isUpdatingTitle}
-                      variant="primary"
-                      className="flex-1 text-sm py-2"
-                    >
-                      Save
-                    </Button>
-                    <Button
-                      onClick={handleCancelEditTitle}
-                      variant="secondary"
-                      disabled={isUpdatingTitle}
-                      className="flex-1 text-sm py-2"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <h2 className="text-white font-medium flex-1">{chat.title}</h2>
-                    <button
-                      onClick={handleStartEditTitle}
-                      className="text-gray-400 hover:text-neon-red transition-colors text-sm"
-                      title="Edit title"
-                    >
-                      ✏️
-                    </button>
-                  </div>
-                  <p className="text-xs text-gray-400">
-                    Created: {formatDate(chat.datetimeCreated || chat.datetimeInserted)}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-          {documentsCount !== null && (
-            <div className="text-sm text-gray-400">
-              Documents in database: <span className="text-neon-red">{documentsCount}</span>
-            </div>
-          )}
-        </div>
+    <div className="flex flex-col h-screen bg-dark-bg overflow-hidden">
+      {/* Mobile header: Back + title (only on small screens) */}
+      <div className="flex md:hidden flex-shrink-0 items-center gap-3 p-3 border-b border-dark-border bg-dark-surface min-h-[52px]">
+        <Link
+          href="/chats"
+          className="text-gray-400 hover:text-neon-red transition-colors py-2 pr-2 -ml-1 min-h-[44px] min-w-[44px] flex items-center touch-manipulation"
+          aria-label="Back to chats"
+        >
+          ← Back
+        </Link>
+        <h1 className="text-white font-medium truncate flex-1 min-w-0">
+          {chat?.title ?? 'Chat'}
+        </h1>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="animate-pulse text-neon-red">Loading messages...</div>
+      <div className="flex flex-1 min-h-0">
+        {/* Sidebar: hidden on mobile, visible on desktop */}
+        <div className="hidden md:flex md:w-80 flex-shrink-0 bg-dark-surface border-r border-dark-border flex-col overflow-y-auto">
+          <div className="p-4 border-b border-dark-border">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-2xl font-bold text-neon-red animate-neon">AI Coach</h1>
+              <Link
+                href="/chats"
+                className="text-gray-400 hover:text-neon-red transition-colors cursor-pointer"
+              >
+                ← Back
+              </Link>
             </div>
-          ) : messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-gray-400">
-              <div className="text-center">
-                <p className="text-xl mb-2">Start the conversation</p>
-                <p className="text-sm">Ask a question to the AI assistant</p>
+            {chat && (
+              <div className="mb-4">
+                {isEditingTitle ? (
+                  <div className="space-y-2">
+                    <Input
+                      value={titleInput}
+                      onChange={(e) => setTitleInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSaveTitle();
+                        } else if (e.key === 'Escape') {
+                          handleCancelEditTitle();
+                        }
+                      }}
+                      disabled={isUpdatingTitle}
+                      className="mb-2"
+                      autoFocus
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleSaveTitle}
+                        isLoading={isUpdatingTitle}
+                        variant="primary"
+                        className="flex-1 text-sm py-2"
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        onClick={handleCancelEditTitle}
+                        variant="secondary"
+                        disabled={isUpdatingTitle}
+                        className="flex-1 text-sm py-2"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <h2 className="text-white font-medium flex-1">{chat.title}</h2>
+                      <button
+                        onClick={handleStartEditTitle}
+                        className="text-gray-400 hover:text-neon-red transition-colors text-sm"
+                        title="Edit title"
+                      >
+                        ✏️
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-400">
+                      Created: {formatDate(chat.datetimeCreated || chat.datetimeInserted)}
+                    </p>
+                  </div>
+                )}
               </div>
-            </div>
-          ) : (
-            <div>
-              {messages.map((message) => (
-                <MessageComponent key={message.id} message={message} />
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-          )}
+            )}
+            {documentsCount !== null && (
+              <div className="text-sm text-gray-400">
+                Documents in database: <span className="text-neon-red">{documentsCount}</span>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Input */}
-        <div className="border-t border-dark-border p-4 bg-dark-surface">
-          <form onSubmit={handleSend} className="flex gap-4">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Enter your question..."
-              disabled={isSending}
-              className="flex-1"
-            />
-            <Button type="submit" isLoading={isSending} disabled={!input.trim()}>
-              Send
-            </Button>
-          </form>
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 overscroll-contain">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="animate-pulse text-neon-red">Loading messages...</div>
+              </div>
+            ) : messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-gray-400">
+                <div className="text-center px-4">
+                  <p className="text-xl mb-2">Start the conversation</p>
+                  <p className="text-sm">Ask a question to the AI assistant</p>
+                </div>
+              </div>
+            ) : (
+              <div>
+                {messages.map((message) => (
+                  <MessageComponent key={message.id} message={message} />
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
+
+          {/* Input: stack on very small screens */}
+          <div className="border-t border-dark-border p-3 md:p-4 bg-dark-surface flex-shrink-0">
+            <form onSubmit={handleSend} className="flex gap-2 md:gap-4">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Enter your question..."
+                disabled={isSending}
+                className="flex-1 min-w-0 min-h-[44px]"
+              />
+              <Button type="submit" isLoading={isSending} disabled={!input.trim()} className="min-h-[44px] px-4 touch-manipulation">
+                Send
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

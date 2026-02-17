@@ -13,7 +13,7 @@ export const Message: React.FC<MessageProps> = ({ message }) => {
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       <div
         className={`
-          max-w-[80%] rounded-lg px-4 py-3
+          max-w-[85%] sm:max-w-[80%] rounded-lg px-4 py-3
           ${isUser 
             ? 'bg-neon-red text-white shadow-neon-red-sm' 
             : 'bg-dark-surface text-gray-200 border border-dark-border'

@@ -20,7 +20,7 @@ export const Input: React.FC<InputProps> = ({
       )}
       <input
         className={`
-          w-full px-4 py-3 bg-dark-surface border border-dark-border rounded-lg
+          w-full px-4 py-3 min-h-[48px] bg-dark-surface border border-dark-border rounded-lg
           text-white placeholder-gray-500 focus:outline-none focus:border-neon-red
           focus:ring-2 focus:ring-neon-red focus:ring-opacity-50 transition-all
           ${error ? 'border-red-500' : ''}

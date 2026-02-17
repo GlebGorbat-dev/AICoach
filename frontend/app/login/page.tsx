@@ -40,7 +40,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-dark-bg p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-neon-red mb-2 animate-neon">
+          <h1 className="text-3xl sm:text-4xl font-bold text-neon-red mb-2 animate-neon">
             AI Coach
           </h1>
           <p className="text-gray-400">Sign in to your account</p>
@@ -71,7 +71,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          <Button type="submit" isLoading={isLoading} className="w-full">
+          <Button type="submit" isLoading={isLoading} className="w-full min-h-[48px] touch-manipulation">
             Sign in
           </Button>
         </form>

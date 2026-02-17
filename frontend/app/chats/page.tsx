@@ -81,15 +81,16 @@ export default function ChatsPage() {
   }
 
   return (
-    <div className="flex h-screen bg-dark-bg">
-      {/* Sidebar */}
-      <div className="w-80 bg-dark-surface border-r border-dark-border flex flex-col">
-        <div className="p-4 border-b border-dark-border">
+    <div className="flex flex-col md:flex-row h-screen bg-dark-bg overflow-hidden">
+      {/* Sidebar: full width on mobile, fixed width on desktop */}
+      <div className="w-full md:w-80 flex-shrink-0 bg-dark-surface md:border-r border-dark-border flex flex-col min-h-0">
+        <div className="p-4 border-b border-dark-border flex-shrink-0">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-neon-red animate-neon">AI Coach</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-neon-red animate-neon">AI Coach</h1>
             <button
               onClick={logout}
-              className="text-gray-400 hover:text-neon-red transition-colors"
+              className="text-gray-400 hover:text-neon-red transition-colors py-2 px-3 -mr-2 min-h-[44px] min-w-[44px] touch-manipulation"
+              aria-label="Quit"
             >
               Quit
             </button>
@@ -97,15 +98,15 @@ export default function ChatsPage() {
           <Button
             onClick={handleCreateChat}
             isLoading={isCreating}
-            className="w-full"
+            className="w-full min-h-[44px] touch-manipulation"
           >
             + New chat
           </Button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-0">
           {chats.length === 0 ? (
-            <p className="text-gray-400 text-center mt-8">No chats. Create a new one!</p>
+            <p className="text-gray-400 text-center mt-8 px-2">No chats. Create a new one!</p>
           ) : (
             chats.map((chat) => (
               <ChatCard
@@ -120,9 +121,9 @@ export default function ChatsPage() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center text-gray-400">
-        <div className="text-center">
+      {/* Main Content: hidden on mobile, visible on desktop */}
+      <div className="hidden md:flex flex-1 items-center justify-center text-gray-400 min-w-0">
+        <div className="text-center px-4">
           <p className="text-xl mb-4">Welcome!</p>
           <p className="mb-4">Select a chat from the list on the left or create a new one</p>
           {chats.length === 0 && (

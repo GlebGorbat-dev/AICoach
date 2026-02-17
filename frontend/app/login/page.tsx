@@ -29,7 +29,8 @@ export default function LoginPage() {
       await login(email, password);
       router.push('/chats');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Login error');
+      const message = err.response?.data?.detail ?? err.message ?? 'Login error';
+      setError(typeof message === 'string' ? message : 'Login error');
     } finally {
       setIsLoading(false);
     }

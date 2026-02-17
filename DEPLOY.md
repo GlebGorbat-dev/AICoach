@@ -1,103 +1,57 @@
 # Deploy to Render.com (Docker)
 
 Deploy **backend** (FastAPI) and **frontend** (Next.js) on [Render](https://render.com) using Docker.  
-You can use **GitHub**, **GitLab**, or **Bitbucket**.
+**Manual creation of two Web Services is free** (no Blueprint needed).
 
 ---
 
-## Deploy via GitHub (recommended)
+## Free deploy: create two Web Services manually (no Blueprint)
 
-### 1. Push code to GitHub
+Репозиторий уже на **GitHub** (или GitLab/Bitbucket). Подключите его к Render и создайте два сервиса отдельно — Blueprint не нужен.
 
-```bash
-git remote add origin https://github.com/YOUR_USERNAME/FastApiFinal.git
-git push -u origin main
-```
+### 1. Подключите репозиторий к Render
 
-(If the repo already exists on GitHub, just push your latest changes.)
+1. Зайдите на [dashboard.render.com](https://dashboard.render.com).
+2. **Account Settings** → **Integrations** → подключите **GitHub** (или GitLab/Bitbucket).
+3. Дайте доступ к репозиторию с проектом (например, **AICoach**).
 
-### 2. Connect Render to GitHub
-
-1. Go to [dashboard.render.com](https://dashboard.render.com).
-2. **Account Settings** → **Integrations** → connect **GitHub** (if not already).
-3. Authorize Render to access your repositories (you can allow all repos or only this one).
-
-### 3. Create services from Blueprint
-
-1. In Render Dashboard: **New** → **Blueprint**.
-2. Select your **GitHub** account and choose the repo **FastApiFinal** (the one that contains `render.yaml`).
-3. Render will read `render.yaml` and create two services:
-   - **fastapi-backend** (Docker)
-   - **nextjs-frontend** (Docker)
-
-4. **Environment variables:**
-   - **nextjs-frontend:** set `NEXT_PUBLIC_API_URL` = `https://fastapi-backend.onrender.com`  
-     (use the actual backend URL from the backend service after the first deploy).
-   - **fastapi-backend:** add your app variables (e.g. `MONGODB_URI`, `OPENAI_API_KEY`).
-
-5. Click **Apply** — Render will build and deploy both services. Each push to `main` can trigger auto-deploy if enabled.
-
----
-
-## Deploy via GitLab or Bitbucket
-
-### 1. Push code to GitLab or Bitbucket
-
-```bash
-# GitLab
-git remote add gitlab https://gitlab.com/YOUR_USERNAME/FastApiFinal.git
-git push -u gitlab main
-
-# Bitbucket
-git remote add bitbucket https://bitbucket.org/YOUR_USERNAME/FastApiFinal.git
-git push -u bitbucket main
-```
-
-### 2. Connect Render to GitLab or Bitbucket
-
-1. [dashboard.render.com](https://dashboard.render.com) → **Account Settings** → **Integrations**.
-2. Connect **GitLab** or **Bitbucket** and authorize access to your repos.
-
-### 3. Create services from Blueprint
-
-Same as GitHub: **New** → **Blueprint** → select your **GitLab** or **Bitbucket** repo. Render will use `render.yaml` and create both services. Set `NEXT_PUBLIC_API_URL` and backend env vars as above.
-
----
-
-## Create services manually (without Blueprint)
-
-### Backend
+### 2. Создайте бэкенд (первый сервис)
 
 1. **New** → **Web Service**.
-2. Connect your **GitHub** (or GitLab/Bitbucket) repo.
-3. Settings:
-   - **Name:** `fastapi-backend`
-   - **Region:** your choice
-   - **Branch:** `main` (or your default)
-   - **Root Directory:** leave empty
+2. Выберите репозиторий (например, `GlebGorbat-dev/AICoach`).
+3. Настройки:
+   - **Name:** `fastapi-backend` (или любое имя)
+   - **Region:** любой
+   - **Branch:** `main`
+   - **Root Directory:** оставьте **пустым**
    - **Runtime:** **Docker**
    - **Dockerfile Path:** `./Dockerfile`
-   - **Instance Type:** Free or paid
-4. Add env vars (e.g. `MONGODB_URI`, `OPENAI_API_KEY`). Render sets `PORT` automatically.
-5. **Create Web Service**.
+   - **Instance Type:** **Free**
+4. **Environment:** добавьте переменные бэкенда:
+   - **`FASTAPI_CONFIG`** = `production` (обязательно для продакшена)
+   - `MONGO_DB_URL`, `OPENAI_API_KEY`, `SECRET_KEY`, `VS_ID`, `TAVILY_API_KEY` и др. (как в вашем `.env`). `PORT` Render подставит сам.
+5. **Create Web Service** → дождитесь первого деплоя и скопируйте URL сервиса (типа `https://fastapi-backend-xxxx.onrender.com`).
 
-### Frontend
+### 3. Создайте фронтенд (второй сервис)
 
-1. **New** → **Web Service**.
-2. Same repo (GitHub / GitLab / Bitbucket).
-3. Settings:
+1. Снова **New** → **Web Service**.
+2. Выберите **тот же репозиторий**.
+3. Настройки:
    - **Name:** `nextjs-frontend`
    - **Root Directory:** `frontend`
    - **Runtime:** **Docker**
    - **Dockerfile Path:** `frontend/Dockerfile`
-   - **Instance Type:** Free or paid
-4. **Environment:**
-   - `NEXT_PUBLIC_API_URL` = `https://fastapi-backend.onrender.com` (your backend URL)
+   - **Instance Type:** **Free**
+4. **Environment:** добавьте переменную:
+   - **Key:** `NEXT_PUBLIC_API_URL`
+   - **Value:** URL бэкенда из шага 2, например `https://fastapi-backend-xxxx.onrender.com`
 5. **Create Web Service**.
+
+Готово: оба сервиса на бесплатном плане. После пуша в `main` можно включить **Auto-Deploy** в настройках каждого сервиса.
 
 ---
 
-## 5. Deploy from a prebuilt Docker image (no Git)
+## Deploy from a prebuilt Docker image (no Git)
 
 If you prefer **not** to give Render access to Git at all:
 
@@ -136,7 +90,7 @@ On the free tier, services may spin down after inactivity; the first request can
 |------|--------|
 | `Dockerfile` (root) | Backend image; uses `PORT` from Render. |
 | `frontend/Dockerfile` | Frontend (Next.js) image; uses `output: 'standalone'`. |
-| `render.yaml` | Blueprint: defines both services for one-click setup. |
+| `render.yaml` | Optional: for Blueprint (paid); not needed for manual deploy. |
 | `.dockerignore` (root) | Excludes frontend, `.venv`, etc. from backend build. |
 | `frontend/.dockerignore` | Excludes `node_modules`, `.next` from frontend build. |
 

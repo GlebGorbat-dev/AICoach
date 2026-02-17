@@ -17,10 +17,16 @@ async def post_user_obj(email, password) -> UserModel:
 
 async def auth_user_obj(email, password) -> UserModel | None:
     """Проверяет существующего пользователя по e-mail и валидирует пароль."""
-    user = await settings.DB_CLIENT.users.find_one({"email": email})
-    if not user:
+    user_doc = await settings.DB_CLIENT.users.find_one({"email": email})
+    if not user_doc:
         raise HTTPException(status_code=404, detail="User not found.")
 
-    if verify_password(password, user["password"]):
-        return UserModel(**user)
-    raise HTTPException(status_code=401, detail="Incorrect password")
+    if not verify_password(password, user_doc["password"]):
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    # MongoDB returns _id, UserModel expects id (str)
+    return UserModel(
+        id=str(user_doc["_id"]),
+        email=user_doc["email"],
+        password=user_doc["password"],
+    )
